@@ -115,7 +115,7 @@ public:
 		: Collection(size)
 	{
 		std::size_t idx = 0;
-		std::generate(_data, _data + _size, [&idx, fn]()
+		std::generate(_data, _data + _size, [&]()
 					  { return fn(idx++); });
 	}
 
@@ -130,15 +130,11 @@ public:
 	Collection(const Collection<U> &u, FN fn)
 		: Collection(u.size())
 	{
-		auto u_iter = u.cbegin();
+		auto u_iter = u.data();
 		std::generate(_data,
 					  _data + _size,
-					  [&u_iter, fn]()
-					  {
-						  T return_value = fn(*u_iter);
-						  ++u_iter;
-						  return return_value;
-					  });
+					  [&]()
+					  { return fn(*u_iter++); });
 	}
 
 	/**
