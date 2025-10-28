@@ -9,37 +9,6 @@
 #include <iostream>
 #include <cstdio>
 
-template <typename T>
-T __host__ __device__ dev_fib(unsigned long n)
-{
-    if (n < 2)
-        return (T)n;
-
-    unsigned long a = 1;
-    unsigned long b = 1;
-    for (unsigned long i = 2; i < n; i++)
-    {
-        unsigned long c = a + b;
-        a = b;
-        b = c;
-    }
-
-    return (T)b;
-}
-
-template <typename T>
-T __host__ __device__ dev_factorial(unsigned long n)
-{
-    if (n < 2)
-        return T(1);
-
-    unsigned long result = 1;
-    for (unsigned long i = 2; i <= n; i++)
-        result *= i;
-
-    return (T)result;
-}
-
 /**
  * @brief Main entry point for the collection test executable.
  * @details This program initializes two `Collection` objects with test data
