@@ -6,6 +6,9 @@ cmake_minimum_required (VERSION 3.24)
 
 project (vs_map_reduce)
 
+# Add the spt directory to the include path for all sub-projects.
+include_directories(spt)
+
 # Add the flag to allow unsupported MSVC compilers for CUDA.
 # This is necessary for preview versions of Visual Studio.
 if(MSVC)
@@ -13,6 +16,7 @@ if(MSVC)
 endif()
 
 # Include sub-projects.
+add_subdirectory (mandelbrot_cpp)
 add_subdirectory (perf_cpp)
 add_subdirectory (test_cpp)
 add_subdirectory (perf_cuda)

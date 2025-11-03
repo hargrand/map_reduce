@@ -86,7 +86,8 @@
         "xmemory": "cpp",
         "xtr1common": "cpp",
         "xutility": "cpp",
-        "forward_list": "cpp"
+        "forward_list": "cpp",
+        "shared_mutex": "cpp"
     },
     "cSpell.words": [
         "cbegin",
@@ -95,8 +96,13 @@
         "cuda",
         "fstream",
         "ifndef",
+        "jmpbuf",
+        "mandel",
         "MSVC",
         "nullptr",
-        "tparam"
+        "tparam",
+        "Werror",
+        "Wextra",
+        "Wpedantic"
     ]
 }
