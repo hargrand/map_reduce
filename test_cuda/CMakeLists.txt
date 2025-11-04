@@ -20,7 +20,7 @@ add_executable (
   test_cuda
   test_cuda.cu
   ../spt/assert.cpp
-  ../test_common/common.cpp)
+  ../spt/test_common.cpp)
 
 set_property(TARGET test_cuda PROPERTY CXX_STANDARD 17)
 

@@ -4,7 +4,7 @@
  */
 
 #include "../spt/cuda_collection.cuh"
-#include "../test_common/common.hpp"
+#include "../spt/test_common.hpp"
 
 #include <iostream>
 #include <cstdio>

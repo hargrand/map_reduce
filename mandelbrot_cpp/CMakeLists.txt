@@ -10,7 +10,13 @@ find_package(PNG REQUIRED)
 find_package(ZLIB REQUIRED)
 
 # Define the executable target from the source file.
-add_executable(mandel_cpp main.cpp mandel.cpp ../spt/image.cpp)
+add_executable(
+    mandel_cpp
+    main.cpp
+    mandel.cpp
+    ../spt/image.cpp
+    ../spt/mandel_common.cpp
+    ../spt/timer.cpp)
 
 # Set the C++ standard to C++17 for the mandel_cpp target.
 # This is the modern, target-centric way to set language standards.

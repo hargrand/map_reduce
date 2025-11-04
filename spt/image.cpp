@@ -42,15 +42,6 @@ const std::unordered_map<int, std::string> PNGImage::error_messages = {
     {PNG_MAKE_ROW_FAIL_ERR, PNG_MAKE_ROW_FAIL_MSG},
     {DATA_ROW_ALLOCATION_FAIL_ERR, DATA_ROW_ALLOCATION_FAIL_MSG}};
 
-Color::Color(unsigned char r, unsigned char g, unsigned char b)
-    : red(r), green(g), blue(b)
-{
-}
-
-Color::Color() : Color(0, 0, 0)
-{
-}
-
 PNGImage::PNGImage(unsigned int image_width,
                    unsigned int image_height,
                    int image_bit_depth)
@@ -191,9 +182,9 @@ void PNGImage::build_image(const std::vector<Color> &colors)
         for (unsigned int col = 0; col < _width; ++col, ++color)
         {
             png_bytep px = &(image_row[col * 3]);
-            px[0] = color->get_red();
-            px[1] = color->get_green();
-            px[2] = color->get_blue();
+            px[0] = color->red;
+            px[1] = color->green;
+            px[2] = color->blue;
         }
     }
 }

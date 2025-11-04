@@ -15,7 +15,8 @@ add_executable (
   perf_cuda
   perf.cu
   ../spt/assert.cpp
-  ../spt/support.cpp)
+  ../spt/perf_common.cpp
+  ../spt/timer.cpp)
 
 set_property(TARGET perf_cuda PROPERTY CXX_STANDARD 17)
 

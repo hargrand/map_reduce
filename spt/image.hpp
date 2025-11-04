@@ -7,20 +7,11 @@
 #ifndef IMAGE_HPP
 #define IMAGE_HPP
 
-class Color
+struct Color
 {
-private:
     unsigned char red;
     unsigned char green;
     unsigned char blue;
-
-public:
-    Color(unsigned char r, unsigned char g, unsigned char b);
-    Color();
-
-    inline unsigned char get_red() const { return red; }
-    inline unsigned char get_green() const { return green; }
-    inline unsigned char get_blue() const { return blue; }
 };
 
 class PNGImage

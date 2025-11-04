@@ -1,7 +1,7 @@
-#include "mandel.hpp"
-#include "../spt/natv_collection.hpp"
+#include "mandel.cuh"
+#include "../spt/cuda_collection.cuh"
 
-unsigned int get_count(
+unsigned int __device__ get_count(
     double x0,
     double y0,
     unsigned int max_iters)
@@ -40,7 +40,7 @@ std::vector<Color> mandelbrot::create_image(
     double top = view_top();
     double left = view_left();
 
-    auto mandel_fn = [=](std::size_t idx) -> unsigned int
+    auto mandel_fn = [=] __device__(std::size_t idx) -> unsigned int
     {
         unsigned int row = idx / width;
         unsigned int col = idx % width;
@@ -50,7 +50,7 @@ std::vector<Color> mandelbrot::create_image(
         return get_count(x, y, max_iters);
     };
 
-    auto color_fn = [=](unsigned int val) -> Color
+    auto color_fn = [=] __device__(unsigned int val) -> Color
     {
         if (val == max_iters)
             return Color{0, 0, 0};

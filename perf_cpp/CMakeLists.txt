@@ -12,7 +12,8 @@ add_executable (
   perf_cpp
   perf.cpp
   ../spt/assert.cpp
-  ../spt/support.cpp)
+  ../spt/perf_common.cpp
+  ../spt/timer.cpp)
 
 set_property(TARGET perf_cpp PROPERTY CXX_STANDARD 17)
 

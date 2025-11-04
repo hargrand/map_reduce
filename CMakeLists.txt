@@ -17,6 +17,7 @@ endif()
 
 # Include sub-projects.
 add_subdirectory (mandelbrot_cpp)
+add_subdirectory (mandelbrot_cuda)
 add_subdirectory (perf_cpp)
 add_subdirectory (test_cpp)
 add_subdirectory (perf_cuda)

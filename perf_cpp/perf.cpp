@@ -3,7 +3,8 @@
  */
 
 #include "../spt/natv_collection.hpp"
-#include "../spt/support.hpp"
+#include "../spt/perf_common.hpp"
+#include "../spt/timer.hpp"
 
 #include <iostream>
 #include <fstream>

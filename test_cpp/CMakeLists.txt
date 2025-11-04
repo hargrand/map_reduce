@@ -16,7 +16,7 @@ add_executable (
   test_cpp
   test_cpp.cpp
   ../spt/assert.cpp
-  ../test_common/common.cpp)
+  ../spt/test_common.cpp)
 
 set_property(TARGET test_cpp PROPERTY CXX_STANDARD 17)
 

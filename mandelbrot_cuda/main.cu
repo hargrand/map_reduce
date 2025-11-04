@@ -1,4 +1,4 @@
-#include "mandel.hpp"
+#include "mandel.cuh"
 #include "../spt/image.hpp"
 #include "../spt/assert.hpp"
 #include "../spt/mandel_common.hpp"

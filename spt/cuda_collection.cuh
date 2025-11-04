@@ -446,6 +446,43 @@ public:
 
 		return return_value;
 	}
+
+	/**
+	 * @brief Creates a new collection by applying a function to each element of this collection.
+	 * @details This method iterates through each element of the current collection, applies the
+	 *          provided function `fn` to it, and stores the result in a new collection.
+	 *          This is a classic "map" operation from functional programming.
+	 * @tparam U The element type of the new collection.
+	 * @tparam FN The type of the mapping function.
+	 * @param fn A function that takes an element of type T (the current collection's type)
+	 *           and returns an element of type U (the new collection's type).
+	 * @return A new `Collection<U>` containing the transformed elements.
+	 */
+	template <typename U, typename FN>
+	Collection<U> map(FN fn) const
+	{
+		return Collection<U>(*this, fn);
+	}
+
+	/**
+	 * @brief Creates a new collection by combining elements from this collection and another using a binary function.
+	 * @details This method pairs up elements from the current collection (`this`) and the provided
+	 *          collection `v`, applies the binary function `fn` to each pair, and stores the
+	 *          result in a new collection. This is a classic "zip" operation. The resulting
+	 *          collection will have a size equal to the minimum of the two source collections' sizes.
+	 * @tparam U The element type of the new collection.
+	 * @tparam V The element type of the second source collection.
+	 * @tparam FN The type of the binary function.
+	 * @param v The second collection to zip with.
+	 * @param fn A binary function that takes an element from `this` (type T) and an element
+	 *           from `v` (type V) and returns an element for the new collection (type U).
+	 * @return A new `Collection<U>` containing the combined elements.
+	 */
+	template <typename U, typename V, typename FN>
+	Collection<U> zip(const Collection<V> &v, FN fn) const
+	{
+		return Collection<U>(*this, v, fn);
+	}
 };
 
 /**

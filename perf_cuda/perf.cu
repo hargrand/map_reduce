@@ -3,7 +3,8 @@
  */
 
 #include "../spt/cuda_collection.cuh"
-#include "../spt/support.hpp"
+#include "../spt/perf_common.hpp"
+#include "../spt/timer.hpp"
 
 #include <curand_kernel.h>
 #include <iostream>
