@@ -1,14 +1,14 @@
 #include "mandel.hpp"
 #include "../spt/natv_collection.hpp"
 
-unsigned int get_count(
+std::size_t get_count(
     double x0,
     double y0,
-    unsigned int max_iters)
+    std::size_t max_iters)
 {
     double x = 0.0;
     double y = 0.0;
-    unsigned int i = 0;
+    std::size_t i = 0;
     double x_temp;
 
     while (i < max_iters && (x * x + y * y) < 4.0)
@@ -32,25 +32,25 @@ mandelbrot::mandelbrot(
 }
 
 std::vector<Color> mandelbrot::create_image(
-    unsigned int width,
-    unsigned int height,
-    unsigned int max_iters) const
+    std::size_t width,
+    std::size_t height,
+    std::size_t max_iters) const
 {
     double scale = view_height() / height;
     double top = view_top();
     double left = view_left();
 
-    auto mandel_fn = [=](std::size_t idx) -> unsigned int
+    auto mandel_fn = [=](std::size_t idx) -> std::size_t
     {
-        unsigned int row = idx / width;
-        unsigned int col = idx % width;
+        std::size_t row = idx / width;
+        std::size_t col = idx % width;
         double y = top - (row * scale);
         double x = left + (col * scale);
 
         return get_count(x, y, max_iters);
     };
 
-    auto color_fn = [=](unsigned int val) -> Color
+    auto color_fn = [=](std::size_t val) -> Color
     {
         if (val == max_iters)
             return Color{0, 0, 0};
@@ -62,7 +62,7 @@ std::vector<Color> mandelbrot::create_image(
         return Color{red, green, blue};
     };
 
-    Collection<unsigned int> data(width * height, mandel_fn);
+    Collection<std::size_t> data(width * height, mandel_fn);
     Collection<Color> colors(data.map<Color>(color_fn));
 
     return colors.to_vector();

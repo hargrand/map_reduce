@@ -18,9 +18,9 @@ public:
         double view_height);
 
     std::vector<Color> create_image(
-        unsigned int width,
-        unsigned int height,
-        unsigned int max_iters) const;
+        std::size_t width,
+        std::size_t height,
+        std::size_t max_iters) const;
 
     inline double view_left() const { return _view_left; }
     inline double view_bottom() const { return _view_bottom; }
