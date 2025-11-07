@@ -1,3 +1,10 @@
+/**
+ * @file image.cpp
+ * @brief Implements the PNGImage class for creating and writing PNG files.
+ * @details This file contains the implementation of the PNGImage class, which uses
+ *          the libpng library to write image data to a PNG file.
+ */
+
 #include "image.hpp"
 #include "assert.hpp"
 
@@ -9,36 +16,59 @@
 #include <string>
 #include <algorithm>
 
+/// @brief Error code for no error.
 #define NO_ERROR 0
+/// @brief Error message for no error.
 #define NO_ERROR_MSG "No error"
 
+/// @brief Error code for failure to allocate libpng write struct.
 #define PNG_ALLOC_WRITE_STRUCT_FAIL_ERR -1
+/// @brief Error message for failure to allocate libpng write struct.
 #define PNG_ALLOC_WRITE_STRUCT_FAIL_MSG "Could not allocate PNG write struct"
 
+/// @brief Error code for failure to allocate libpng info struct.
 #define PNG_ALLOC_INFO_STRUCT_FAIL_ERR -2
+/// @brief Error message for failure to allocate libpng info struct.
 #define PNG_ALLOC_INFO_STRUCT_FAIL_MSG "Could not allocate PNG info struct"
 
+/// @brief Error code for a general libpng error during creation.
 #define PNG_ERROR_HANDLING_FAIL_ERR -3
+/// @brief Error message for a general libpng error during creation.
 #define PNG_ERROR_HANDLING_FAIL_MSG "An error occurred during PNG creation"
 
+/// @brief Error code for failure to open the output file.
 #define PNG_FILE_OPEN_FAIL_ERR -4
+/// @brief Error message for failure to open the output file.
 #define PNG_FILE_OPEN_FAIL_MSG "Could not open file for writing"
 
+/// @brief Error code for failure to allocate memory for row pointers.
 #define PNG_MAKE_ROWS_FAIL_ERR -5
+/// @brief Error message for failure to allocate memory for row pointers.
 #define PNG_MAKE_ROWS_FAIL_MSG "Could not allocate memory for row pointers"
 
+/// @brief Error code for failure to allocate memory for a single row.
 #define PNG_MAKE_ROW_FAIL_ERR -6
+/// @brief Error message for failure to allocate memory for a single row.
 #define PNG_MAKE_ROW_FAIL_MSG "Could not allocate memory for row"
 
+/// @brief Error code for failure to allocate memory for a data row.
 #define DATA_ROW_ALLOCATION_FAIL_ERR -7
+/// @brief Error message for failure to allocate memory for a data row.
 #define DATA_ROW_ALLOCATION_FAIL_MSG "Could not allocate memory for row in image data"
 
+/**
+ * @class PNGException
+ * @brief Custom exception for libpng errors.
+ * @details This exception is thrown by the custom error handler to allow for
+ *          C++-style exception handling instead of using `longjmp`.
+ */
 class PNGException : public std::runtime_error
 {
 public:
     using std::runtime_error::runtime_error;
 };
 
+/// @brief A map of error codes to their string representations.
 const std::unordered_map<int, std::string> PNGImage::error_messages = {
     {NO_ERROR, NO_ERROR_MSG},
     {PNG_ALLOC_WRITE_STRUCT_FAIL_ERR, PNG_ALLOC_WRITE_STRUCT_FAIL_MSG},
@@ -49,6 +79,9 @@ const std::unordered_map<int, std::string> PNGImage::error_messages = {
     {PNG_MAKE_ROW_FAIL_ERR, PNG_MAKE_ROW_FAIL_MSG},
     {DATA_ROW_ALLOCATION_FAIL_ERR, DATA_ROW_ALLOCATION_FAIL_MSG}};
 
+/**
+ * @brief Constructs a PNGImage object.
+ */
 PNGImage::PNGImage(unsigned int image_width,
                    unsigned int image_height,
                    int image_bit_depth)
@@ -63,11 +96,17 @@ PNGImage::PNGImage(unsigned int image_width,
 {
 }
 
+/**
+ * @brief Destroys the PNGImage object and cleans up resources.
+ */
 PNGImage::~PNGImage()
 {
     cleanup(_error_code);
 }
 
+/**
+ * @brief Frees all allocated resources and sets the final error code.
+ */
 void PNGImage::cleanup(int error_code)
 {
     _error_code = error_code;
@@ -94,12 +133,18 @@ void PNGImage::cleanup(int error_code)
     _info_ptr = nullptr;
 }
 
+/**
+ * @brief Custom libpng error handler that throws a PNGException.
+ */
 void PNGImage::error_handler(png_structp, png_const_charp msg)
 {
     // Throw an exception instead of using longjmp.
     throw PNGException(msg);
 }
 
+/**
+ * @brief Initializes the libpng write and info structures.
+ */
 void PNGImage::init_image()
 {
     // Initialize the PNG write structures
@@ -119,6 +164,9 @@ void PNGImage::init_image()
     }
 }
 
+/**
+ * @brief Opens the output file and initializes libpng for writing.
+ */
 void PNGImage::open_png_output_file(const std::string &filename)
 {
     // Open the file for writing in binary mode
@@ -142,6 +190,9 @@ void PNGImage::open_png_output_file(const std::string &filename)
     png_init_io(_png_ptr, _file_ptr);
 }
 
+/**
+ * @brief Sets up PNG headers and allocates memory for image rows.
+ */
 void PNGImage::make_rows()
 {
     try
@@ -184,6 +235,9 @@ void PNGImage::make_rows()
     }
 }
 
+/**
+ * @brief Converts the vector of Color data into the row format required by libpng.
+ */
 void PNGImage::build_image(const std::vector<Color> &colors)
 {
     std::size_t expected_size = _width * _height;
@@ -208,7 +262,9 @@ void PNGImage::build_image(const std::vector<Color> &colors)
     }
 }
 
-// Function to write image data to a PNG file
+/**
+ * @brief Main function to write the image data to a specified PNG file.
+ */
 void PNGImage::write(const std::string &filename, const std::vector<Color> &colors)
 {
     // Open the file for writing in binary mode

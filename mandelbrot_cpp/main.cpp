@@ -1,13 +1,26 @@
+/**
+ * @file main.cpp
+ * @brief Main entry point for the Mandelbrot set generator.
+ * @details This program generates a PNG image of the Mandelbrot set based on
+ *          command-line arguments specifying the output file, image dimensions,
+ *          iteration limit, and viewing window.
+ */
+
 #include "mandel.hpp"
 #include "../spt/image.hpp"
 #include "../spt/assert.hpp"
 #include "../spt/mandel_common.hpp"
 #include "../spt/timer.hpp"
-
 #include <iostream>
 #include <string>
 #include <vector>
 
+/**
+ * @brief Main function to generate the Mandelbrot set image.
+ * @param argc The number of command-line arguments.
+ * @param argv An array of command-line arguments.
+ * @return 0 on successful image creation, 1 on argument error, or a non-zero error code from the PNGImage class on file write failure.
+ */
 int main(int argc, char *argv[])
 {
     std::vector<std::string> args(argv, argv + argc);

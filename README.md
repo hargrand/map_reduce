@@ -4,14 +4,14 @@
 
 ### Prerequisites
 Install Visual Studio 2022 Community Edition (This appears to be the latest version the CUDA toolkit currently supports)
-Install NVIDIA CUDA Toolkit version 13.0 (This needs to be done after instaling MSVC so it can register itself with the compiler tools)
+Install NVIDIA CUDA Toolkit version 13.0 (This needs to be done after installing MSVC so it can register itself with the compiler tools)
 
 ### Download, build and install zlib
 ```batch
 git clone git@github.com:madler/zlib.git
 cd zlib
 md build
-cmake -S . -B build  -DCMAKE_INSTALL_PREFIX="d:\local\zlib"
+cmake -S . -B build  -DCMAKE_INSTALL_PREFIX="c:\local\zlib"
 cmake --build build --config Release
 cmake --install build --config Release
 ```
@@ -22,7 +22,7 @@ cd ..
 git clone git@github.com:pnggroup/libpng.git
 cd libpng
 md build
-cmake -S . -B build  -DCMAKE_INSTALL_PREFIX="d:\local\libpng" -DZLIB_LIBRARY="d:\local\zlib\lib\z.lib" -DZLIB_INCLUDE_DIR="d:\local\zlib\include"
+cmake -S . -B build  -DCMAKE_INSTALL_PREFIX="c:\local\libpng" -DZLIB_LIBRARY="c:\local\zlib\lib\z.lib" -DZLIB_INCLUDE_DIR="c:\local\zlib\include"
 cmake --build build --config Release
 cmake --install build --config Release
 ```
@@ -32,7 +32,7 @@ cmake --install build --config Release
 cd ..
 cd map_reduce
 md build
-cmake -S . -B build  -DZLIB_LIBRARY="d:\local\zlib\lib\zs.lib" -DZLIB_INCLUDE_DIR="d:\local\zlib\include" -DPNG_LIBRARY="d:\local\libpng\lib\libpng18_static.lib" -DPNG_PNG_INCLUDE_DIR="d:\local\libpng\include"
+cmake -S . -B build  -DZLIB_LIBRARY="c:\local\zlib\lib\zs.lib" -DZLIB_INCLUDE_DIR="c:\local\zlib\include" -DPNG_LIBRARY="c:\local\libpng\lib\libpng18_static.lib" -DPNG_PNG_INCLUDE_DIR="c:\local\libpng\include"
 cmake --build build --config Release```
 ```
 
@@ -57,8 +57,8 @@ cmake --build build --config Release```
 
 ## Linux
 
-### Preequisites
-You can install the developer versions of zlib and libpng using the software package manager native to your Linux distro (i.e. `sudo apt-get install zlib1g-dev libpng-dev` for Debian/Ubuntu or `sudo yum install zlib-devel libpng-devel` for CentOS/Fedora).
+### Prerequisites
+You can install the developer versions of zlib and libpng using the software package manager native to your Linux distribution (i.e. `sudo apt-get install zlib1g-dev libpng-dev` for Debian/Ubuntu or `sudo yum install zlib-devel libpng-devel` for CentOS/Fedora).
 
 You will also need to make sure you have gcc, cmake and the cuda toolkit installed on your host.
 

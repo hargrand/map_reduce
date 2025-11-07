@@ -1,13 +1,26 @@
+/**
+ * @file main.cu
+ * @brief Main entry point for the CUDA Mandelbrot set generator.
+ * @details This program generates a PNG image of the Mandelbrot set using CUDA
+ *          for acceleration. It takes command-line arguments specifying the
+ *          output file, image dimensions, iteration limit, and viewing window.
+ */
+
 #include "mandel.cuh"
 #include "../spt/image.hpp"
 #include "../spt/assert.hpp"
 #include "../spt/mandel_common.hpp"
 #include "../spt/timer.hpp"
-
 #include <iostream>
 #include <string>
 #include <vector>
 
+/**
+ * @brief Main function to generate the Mandelbrot set image using CUDA.
+ * @param argc The number of command-line arguments.
+ * @param argv An array of command-line arguments.
+ * @return 0 on successful image creation, 1 on argument error, or a non-zero error code on file write failure.
+ */
 int main(int argc, char *argv[])
 {
     std::vector<std::string> args(argv, argv + argc);

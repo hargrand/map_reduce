@@ -1,5 +1,11 @@
 ﻿/**
- * @file map_reduce.cu
+ * @file perf.cu
+ * @brief Performance test for the CUDA Collection class.
+ * @details This program runs a series of performance tests on the map/reduce
+ *          operations of the CUDA `Collection` class. It takes command-line
+ *          arguments to specify the output file and the sizes of the collections
+ *          to test. Test data is generated on the GPU using cuRAND. The results
+ *          are written to a CSV file.
  */
 
 #include "../spt/cuda_collection.cuh"
@@ -14,9 +20,14 @@
 #include <string>
 
 /**
- *  @brief Main entry point of the program.
- *  @details Demonstrates the usage of the Collection class and its map/reduce-style operations.
- *  @return 0 on successful execution.
+ * @brief Main entry point for the CUDA performance test program.
+ * @details Parses command-line arguments, initializes cuRAND states on the GPU,
+ *          runs performance tests for various collection sizes, and writes the
+ *          results to a file. The tests involve creating a collection of random
+ *          doubles directly on the device and performing map/reduce operations.
+ * @param argc The number of command-line arguments.
+ * @param argv An array of command-line arguments.
+ * @return 0 on successful execution.
  */
 int main(int argc, char **argv)
 {

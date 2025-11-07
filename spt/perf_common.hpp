@@ -1,4 +1,13 @@
-﻿#ifndef PERF_COMMON_HPP
+﻿/**
+ * @file perf_common.hpp
+ * @brief Provides common data structures and functions for performance tests.
+ * @details This header defines common utilities used by both the native C++ and
+ *          CUDA performance test executables. It includes data structures for
+ *          test results (`result`), test cases (`test_case`), and template
+ *          functions for running tests and reporting results.
+ */
+
+#ifndef PERF_COMMON_HPP
 #define PERF_COMMON_HPP
 
 #include "timer.hpp"
@@ -9,48 +18,64 @@
 #include <iostream>
 #include <fstream>
 
-/// @brief Holds the performance results of a single test run.
+/**
+ * @struct result
+ * @brief Holds the performance results of a single test run.
+ * @tparam T The type of the value computed in the test.
+ */
 template <typename T>
 struct result
 {
-	/// @brief The size of the collections used in the test.
+	/** @brief The size of the collections used in the test. */
 	std::size_t size;
 
-	/// @brief Value computed in the test
+	/** @brief The value computed in the test. */
 	T value;
 
-	/// @brief Time taken to generate the first collection (in nanoseconds).
+	/** @brief Time taken to generate the first collection (in nanoseconds). */
 	long long gen_time_1;
 
-	/// @brief Time taken to generate the second collection (in nanoseconds).
+	/** @brief Time taken to generate the second collection (in nanoseconds). */
 	long long gen_time_2;
 
-	/// @brief Time taken for the element-wise multiplication (zip) operation.
+	/** @brief Time taken for the element-wise multiplication (zip) operation. */
 	long long zip_time;
 
-	/// @brief Time taken for the sum (reduce) operation.
+	/** @brief Time taken for the sum (reduce) operation. */
 	long long reduce_time;
 };
 
-/// @brief Defines a set of tests to be run.
+/**
+ * @struct test_case
+ * @brief Defines a set of tests to be run, parsed from command-line arguments.
+ */
 struct test_case
 {
-	/// @brief The path to the output CSV file.
+	/** @brief The path to the output CSV file. */
 	std::string output_file;
 
-	/// @brief A vector of collection sizes to be tested.
+	/** @brief A vector of collection sizes to be tested. */
 	std::vector<std::size_t> test_cases;
 };
 
-/// @brief Parses command-line arguments into a test_case struct.
-/// @param args A vector of strings representing the command-line arguments.
-/// @return A populated test_case struct.
+/**
+ * @brief Parses command-line arguments into a test_case struct.
+ * @param args A vector of strings representing the command-line arguments.
+ * @return A populated test_case struct.
+ */
 extern test_case parse_args(const std::vector<std::string> &args);
 
-/// @brief Runs a single performance test for a given collection size.
-/// @param size The number of elements for the collections in the test.
-/// @param gen The random number generator to use for creating collection elements.
-/// @return A result struct containing the performance metrics of the test.
+/**
+ * @brief Runs a single performance test for a given collection size.
+ * @details This function times the creation of two collections, a zip operation
+ *          (multiplication), and a reduce operation (sum).
+ * @tparam COLL The type of the Collection class to test.
+ * @tparam T The type of data held by the collection.
+ * @tparam FN The type of the generator function for creating collection elements.
+ * @param size The number of elements for the collections in the test.
+ * @param fn The generator function to use for creating collection elements.
+ * @return A result struct containing the performance metrics of the test.
+ */
 template <typename COLL, typename T, typename FN>
 result<T> run_test(std::size_t size, FN fn)
 {
@@ -78,9 +103,11 @@ result<T> run_test(std::size_t size, FN fn)
 	return res;
 }
 
-/// @brief Prints the results to the console.
-/// @tparam T The type of the result.
-/// @param res The result struct to be printed.
+/**
+ * @brief Prints the results of a single test run to the console.
+ * @tparam T The type of the value in the result.
+ * @param res The result struct to be printed.
+ */
 template <typename T>
 extern void report(const result<T> &res)
 {
@@ -94,10 +121,12 @@ extern void report(const result<T> &res)
 	std::cout << "******************" << std::endl;
 }
 
-/// @brief Writes the collected test results to a CSV file.
-/// @tparam T The type of the result.
-/// @param tc The test_case struct containing the output file name.
-/// @param results A vector of result structs to be written to the file.
+/**
+ * @brief Writes the collected test results to a CSV file.
+ * @tparam T The type of the value in the result.
+ * @param tc The test_case struct containing the output file name.
+ * @param results A vector of result structs to be written to the file.
+ */
 template <typename T>
 void write_results(const test_case &tc, const std::vector<result<T>> &results)
 {

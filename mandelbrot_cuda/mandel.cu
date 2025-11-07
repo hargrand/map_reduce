@@ -1,6 +1,18 @@
 #include "mandel.cuh"
 #include "../spt/cuda_collection.cuh"
 
+/**
+ * @brief Calculates the Mandelbrot iteration count for a given point on the GPU.
+ * @details This `__device__` function determines if a point (x0, y0) is in the
+ *          Mandelbrot set by iterating the equation z_{n+1} = z_n^2 + c. It
+ *          returns the number of iterations it takes for the magnitude of z to
+ *          exceed 2, up to a maximum limit. This function is executed on the
+ *          CUDA device.
+ * @param x0 The real part of the complex number c.
+ * @param y0 The imaginary part of the complex number c.
+ * @param max_iters The maximum number of iterations to perform.
+ * @return The number of iterations before escaping, or max_iters if it does not.
+ */
 std::size_t __device__ get_count(
     double x0,
     double y0,
@@ -21,6 +33,9 @@ std::size_t __device__ get_count(
     return i;
 }
 
+/**
+ * @brief Constructs a mandelbrot object.
+ */
 mandelbrot::mandelbrot(
     double view_left,
     double view_bottom,
@@ -31,6 +46,9 @@ mandelbrot::mandelbrot(
 {
 }
 
+/**
+ * @brief Creates the image data for the Mandelbrot set using CUDA.
+ */
 std::vector<Color> mandelbrot::create_image(
     std::size_t width,
     std::size_t height,
