@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdexcept>
 #include <stddef.h>
 #include <iostream>
 #include <string>
@@ -31,6 +32,12 @@
 
 #define DATA_ROW_ALLOCATION_FAIL_ERR -7
 #define DATA_ROW_ALLOCATION_FAIL_MSG "Could not allocate memory for row in image data"
+
+class PNGException : public std::runtime_error
+{
+public:
+    using std::runtime_error::runtime_error;
+};
 
 const std::unordered_map<int, std::string> PNGImage::error_messages = {
     {NO_ERROR, NO_ERROR_MSG},
@@ -87,10 +94,17 @@ void PNGImage::cleanup(int error_code)
     _info_ptr = nullptr;
 }
 
+void PNGImage::error_handler(png_structp, png_const_charp msg)
+{
+    // Throw an exception instead of using longjmp.
+    throw PNGException(msg);
+}
+
 void PNGImage::init_image()
 {
     // Initialize the PNG write structures
-    _png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+    // Provide custom error handler to use exceptions instead of setjmp/longjmp
+    _png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, &PNGImage::error_handler, nullptr);
     if (!_png_ptr)
     {
         cleanup(PNG_ALLOC_WRITE_STRUCT_FAIL_ERR);
@@ -103,19 +117,16 @@ void PNGImage::init_image()
         cleanup(PNG_ALLOC_INFO_STRUCT_FAIL_ERR);
         return;
     }
-
-    // Set up error handling
-    if (setjmp(png_jmpbuf(_png_ptr)))
-    {
-        cleanup(PNG_ERROR_HANDLING_FAIL_ERR);
-        return;
-    }
 }
 
 void PNGImage::open_png_output_file(const std::string &filename)
 {
     // Open the file for writing in binary mode
+#if defined(_MSC_VER)
+    fopen_s(&_file_ptr, filename.c_str(), "wb");
+#else
     _file_ptr = fopen(filename.c_str(), "wb");
+#endif
     if (!_file_ptr)
     {
         cleanup(PNG_FILE_OPEN_FAIL_ERR);
@@ -133,35 +144,43 @@ void PNGImage::open_png_output_file(const std::string &filename)
 
 void PNGImage::make_rows()
 {
-    // Set the PNG header information
-    png_set_IHDR(_png_ptr, _info_ptr, _width,
-                 _height, _bit_depth,
-                 PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
-                 PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
-
-    // Write the header to the file
-    png_write_info(_png_ptr, _info_ptr);
-
-    // Allocate memory for the row pointers
-    _rows_ptr = new png_bytep[_height];
-    if (!_rows_ptr)
+    try
     {
-        cleanup(PNG_MAKE_ROWS_FAIL_ERR);
-        return;
-    }
+        // Set the PNG header information
+        png_set_IHDR(_png_ptr, _info_ptr, _width,
+                     _height, _bit_depth,
+                     PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
+                     PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
 
-    // Initialize row pointers to nullptr for safer cleanup on allocation failure.
-    std::fill(_rows_ptr, _rows_ptr + _height, nullptr);
+        // Write the header to the file
+        png_write_info(_png_ptr, _info_ptr);
 
-    // Allocate memory for each row
-    for (unsigned int y = 0; y < _height; y++)
-    {
-        _rows_ptr[y] = new png_byte[png_get_rowbytes(_png_ptr, _info_ptr)];
-        if (!_rows_ptr[y])
+        // Allocate memory for the row pointers
+        _rows_ptr = new png_bytep[_height];
+        if (!_rows_ptr)
         {
-            cleanup(PNG_MAKE_ROW_FAIL_ERR);
+            cleanup(PNG_MAKE_ROWS_FAIL_ERR);
             return;
         }
+
+        // Initialize row pointers to nullptr for safer cleanup on allocation failure.
+        std::fill(_rows_ptr, _rows_ptr + _height, nullptr);
+
+        // Allocate memory for each row
+        for (unsigned int y = 0; y < _height; y++)
+        {
+            _rows_ptr[y] = new png_byte[png_get_rowbytes(_png_ptr, _info_ptr)];
+            if (!_rows_ptr[y])
+            {
+                cleanup(PNG_MAKE_ROW_FAIL_ERR);
+                return;
+            }
+        }
+    }
+    catch (const PNGException &e)
+    {
+        std::cerr << "libpng error: " << e.what() << std::endl;
+        cleanup(PNG_ERROR_HANDLING_FAIL_ERR);
     }
 }
 
@@ -199,11 +218,18 @@ void PNGImage::write(const std::string &filename, const std::vector<Color> &colo
     build_image(colors);
     assert_equal(error_code(), NO_ERROR, error_message());
 
-    // Set up the output control
-    // Write the image data to the file
-    png_write_image(_png_ptr, _rows_ptr);
+    try
+    {
+        // Write the image data to the file
+        png_write_image(_png_ptr, _rows_ptr);
 
-    // End the write process
-    png_write_end(_png_ptr, NULL);
+        // End the write process
+        png_write_end(_png_ptr, NULL);
+    }
+    catch (const PNGException &e)
+    {
+        std::cerr << "libpng error during write: " << e.what() << std::endl;
+        cleanup(PNG_ERROR_HANDLING_FAIL_ERR);
+    }
     cleanup(NO_ERROR);
 }

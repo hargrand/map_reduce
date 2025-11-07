@@ -200,7 +200,7 @@ private:
 	const std::size_t _size;
 
 	/** @brief Size of the CUDA block to use for these operations */
-	const static std::size_t THREADS_PER_BLOCK = 256;
+	const static std::size_t THREADS_PER_BLOCK = 1024;
 
 	/** @brief Number of blocks neede to process this vector */
 	const std::size_t BLOCK_COUNT;

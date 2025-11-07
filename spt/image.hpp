@@ -41,6 +41,7 @@ public:
 
     virtual ~PNGImage();
 
+    static void error_handler(png_structp png_ptr, png_const_charp msg);
     inline int error_code() const { return _error_code; }
     inline std::string error_message() const { return error_messages.at(error_code()); }
     inline unsigned int width() const { return _width; }
@@ -48,30 +49,5 @@ public:
     inline unsigned int bit_depth() const { return _bit_depth; }
     void write(const std::string &filename, const std::vector<Color> &colors);
 };
-
-// typedef struct
-// {
-//     png_structp png_ptr;
-//     png_infop info_ptr;
-//     png_bytep *rows_ptr;
-//     FILE *file_ptr;
-//     unsigned int width;
-//     unsigned int height;
-//     int bit_depth;
-// } image_config;
-
-// typedef image_config *image_config_ptr;
-
-// extern void report(int err);
-
-// extern int init_image(image_config_ptr image,
-//                       const char *filename,
-//                       unsigned int image_width,
-//                       unsigned int image_height,
-//                       int image_bit_depth);
-
-// extern void write_png_file(image_config_ptr image);
-
-// extern void cleanup_image(image_config_ptr image);
 
 #endif

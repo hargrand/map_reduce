@@ -21,7 +21,16 @@ add_executable (
 set_property(TARGET perf_cuda PROPERTY CXX_STANDARD 17)
 
 # Enable extended lambda support for CUDA
-target_compile_options(perf_cuda PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:--extended-lambda>)
+target_compile_options(perf_cuda PRIVATE
+    # Flags for GCC and Clang (for C++)
+    $<$<CXX_COMPILER_ID:GNU,Clang>:-O3>
+
+    # Flags for MSVC (Visual Studio) (for C++)
+    $<$<CXX_COMPILER_ID:MSVC>:/O2>
+
+    # Flags for CUDA compiler (nvcc)
+    $<$<COMPILE_LANGUAGE:CUDA>:--extended-lambda -O3>
+)
 
 # Place the executable in the <build_root>/bin directory
 set_target_properties(perf_cuda PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")

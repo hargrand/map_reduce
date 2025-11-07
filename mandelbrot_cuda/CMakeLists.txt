@@ -1,9 +1,8 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.24)
 
 # Set the policy for CUDA architectures to suppress the CMP0104 warning.
 # This ensures that CMAKE_CUDA_ARCHITECTURES is used.
-cmake_policy(SET CMP0104 NEW)
-
+# cmake_policy(SET CMP0104 NEW)
 
 project(mandel_cuda CXX CUDA)
 
@@ -38,16 +37,24 @@ set_property(TARGET mandel_cuda PROPERTY CUDA_STANDARD_REQUIRED ON)
 
 # Place the executable in the <build_root>/bin directory
 set_target_properties(mandel_cuda PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+set_target_properties(mandel_cuda PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+
+if(MSVC)
+    target_compile_options(mandel_cuda PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:-allow-unsupported-compiler>)
+endif()
 
 # Link the executable against the libraries found by find_package.
 # Using the modern target-based approach (PNG::PNG) is recommended.
 target_link_libraries(mandel_cuda PRIVATE PNG::PNG ZLIB::ZLIB)
 
-set_property(TARGET mandel_cuda PROPERTY CXX_STANDARD 17)
-
 # Enable extended lambda support for CUDA
-target_compile_options(mandel_cuda PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:--extended-lambda>)
+target_compile_options(mandel_cuda PRIVATE
+    # Flags for GCC and Clang (for C++)
+    $<$<CXX_COMPILER_ID:GNU,Clang>:-O3>
 
-# Place the executable in the <build_root>/bin directory
-set_target_properties(mandel_cuda PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+    # Flags for MSVC (Visual Studio) (for C++)
+    $<$<CXX_COMPILER_ID:MSVC>:/O2>
 
+    # Flags for CUDA compiler (nvcc)
+    $<$<COMPILE_LANGUAGE:CUDA>:--extended-lambda -O3>
+)

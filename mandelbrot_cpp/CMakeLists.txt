@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required (VERSION 3.24)
 
 project(mandel_cpp CXX)
 
@@ -34,7 +34,7 @@ target_link_libraries(mandel_cpp PRIVATE PNG::PNG ZLIB::ZLIB)
 # This uses generator expressions to apply the correct flags based on the compiler.
 target_compile_options(mandel_cpp PRIVATE
     # Flags for GCC and Clang (for C++)
-    $<$<CXX_COMPILER_ID:GNU,Clang>:-Wall -Wextra -Wpedantic -Werror>
+    $<$<CXX_COMPILER_ID:GNU,Clang>:-Wall -Wextra -Wpedantic -Werror -O3>
     # Flags for MSVC (Visual Studio) (for C++)
-    $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX>
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /O2>
 )

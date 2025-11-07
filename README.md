@@ -1,0 +1,70 @@
+Map-Reduce comparisons C++ vs CUDA
+
+# Preequisites:
+
+# Windows / MSVC
+Install Visual Studio 2022 Community Edition (This appears to be the latest version the CUDA toolkit currently supports)
+Install NVIDIA CUDA Toolkit version 13.0 (This needs to be done after instaling MSVC so it can register itself with the compiler tools)
+
+## Download, build and install zlib
+```git clone git@github.com:madler/zlib.git
+cd zlib
+md build
+cmake -S . -B build  -DCMAKE_INSTALL_PREFIX="d:\local\zlib"
+cmake --build build --config Release
+cmake --install build --config Release```
+
+## Download, build and install libpng
+```cd ..
+git clone git@github.com:pnggroup/libpng.git
+cd libpng
+md build
+cmake -S . -B build  -DCMAKE_INSTALL_PREFIX="d:\local\libpng" -DZLIB_LIBRARY="d:\local\zlib\lib\z.lib" -DZLIB_INCLUDE_DIR="d:\local\zlib\include"
+cmake --build build --config Release
+cmake --install build --config Release```
+
+## Build the Map/Reduce Samples
+```cd ..
+cd map_reduce
+md build
+cmake -S . -B build  -DZLIB_LIBRARY="d:\local\zlib\lib\zs.lib" -DZLIB_INCLUDE_DIR="d:\local\zlib\include" -DPNG_LIBRARY="d:\local\libpng\lib\libpng18_static.lib" -DPNG_PNG_INCLUDE_DIR="d:\local\libpng\include"
+cmake --build build --config Release```
+
+## Run
+### Compare Mandelbrot image generation times:
+```.\build\bin\Release\mandel_cpp.exe mandel_cpp_4k.png 3840 2160 8192 -3.555556 -2.0 4.0
+.\build\bin\Release\mandel_cuda.exe mandel_cuda_4k.png 3840 2160 8192 -3.555556 -2.0 4.0```
+
+### Compare dot product performance times:
+```.\build\bin\Release\perf_cpp.exe cpp.csv 10 100 1000 10000 100000 1000000 10000000 100000000
+.\build\bin\Release\perf_cuda.exe cuda.csv 10 10 100 1000 10000 100000 1000000 10000000 100000000```
+
+### Run the unit tests suite
+```.\build\bin\Release\test_cpp.exe
+.\build\bin\Release\test_cuda.exe```
+
+# Linux
+
+## Download, build and install zlib and libpng
+
+You can install the developer versions of these using software package manager native to your Linux distro (i.e. yum, apt, ...)
+
+## Build the Map/Reduce Samples
+```cd ..
+cd map_reduce
+md build
+cmake -S . -B build
+cmake --build build```
+
+## Run
+### Compare Mandelbrot image generation times:
+```./build/bin/mandel_cpp mandel_cpp_4k.png 3840 2160 8192 -3.555556 -2.0 4.0
+./build/bin/mandel_cuda mandel_cuda_4k.png 3840 2160 8192 -3.555556 -2.0 4.0```
+
+### Compare dot product performance times:
+```./build/bin/perf_cpp cpp.csv 10 100 1000 10000 100000 1000000 10000000 100000000
+./build/bin/perf_cuda cuda.csv 10 10 100 1000 10000 100000 1000000 10000000 100000000```
+
+### Run the unit tests suite
+```./build/bin/test_cpp
+./build/bin/test_cuda```
